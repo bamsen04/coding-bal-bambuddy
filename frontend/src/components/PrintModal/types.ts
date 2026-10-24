@@ -328,4 +328,6 @@ export interface ScheduleOptionsProps {
   printerCount?: number;
   /** Whether G-code snippets are configured in settings */
   hasGcodeSnippets?: boolean;
+  /** Request-only user (queue:request without queue:create): always staged, sent for approval */
+  requestOnly?: boolean;
 }

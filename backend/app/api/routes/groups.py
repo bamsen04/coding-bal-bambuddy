@@ -34,6 +34,8 @@ router = APIRouter(prefix="/groups", tags=["groups"])
 # box in the group editor has nothing else to go on (#1894).
 _PERMISSION_LABEL_OVERRIDES: dict[Permission, str] = {
     Permission.USERS_READ_SLIM: "List User Names (id + username only)",
+    Permission.QUEUE_REQUEST: "Add to Queue (library only, needs approval)",
+    Permission.QUEUE_APPROVE: "Approve Queue Requests",
 }
 
 

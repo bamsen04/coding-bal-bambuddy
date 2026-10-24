@@ -1340,6 +1340,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Utskriftsbegäran skickad för godkännande',
     title: 'Utskriftskö',
     subtitle: 'Schemalägg och hantera dina utskriftsjobb',
     filamentShort: {
@@ -1525,6 +1526,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Väntar på godkännande',
       staged: 'Förberedd',
       requiresPrevious: 'Kräver tidigare framgång',
       autoPowerOff: 'Auto-avstängning',
@@ -1549,6 +1551,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Godkänn och starta utskrift',
+      rejectRequest: 'Avvisa begäran',
       startPrint: 'Starta utskrift',
       stopPrint: 'Stoppa utskrift',
       requeue: 'Lägg tillbaka i kö',
@@ -1661,6 +1665,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Den här utskriften väntar på godkännande',
       noStopPrint: 'Du har inte behörighet att stoppa utskrifter',
       noStartPrint: 'Du har inte behörighet att starta utskrifter',
       noEdit: 'Du har inte behörighet att redigera denna köpost',
@@ -5272,6 +5277,8 @@ errors: {
 
   // Print modal
   printModal: {
+    requestPrint: 'Begär utskrift',
+    requestNotice: 'Den här utskriften skickas för godkännande. Den startar på vald skrivare när någon med godkännanderätt startar den.',
     variants: {
       editNote: 'Dessa alternativ sattes när jobbet köades. Avbryt och köa om för att ändra dem.',
       title: 'Skrivaralternativ',
@@ -6397,6 +6404,8 @@ errors: {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Utskriftsbegäran',
+    approvalRequestedDescription: 'En utskriftsbegäran väntar på godkännande',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

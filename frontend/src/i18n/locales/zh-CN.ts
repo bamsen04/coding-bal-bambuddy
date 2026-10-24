@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: '打印请求已提交审批',
     filamentShort: {
       rowBadge: '所分配料盘的耀丝不足',
       rowTooltip: '调度程序已标记该项。点击播放查看各插槽的赤字并决定是否仍要打印。',
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: '等待审批',
       staged: '已暂存',
       requiresPrevious: '需要前一个成功',
       autoPowerOff: '自动关机',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: '批准并开始打印',
+      rejectRequest: '拒绝请求',
       startPrint: '开始打印',
       stopPrint: '停止打印',
       requeue: '重新排队',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: '此打印正在等待审批',
       noStopPrint: '您没有停止打印的权限',
       noStartPrint: '您没有开始打印的权限',
       noEdit: '您没有编辑此队列项目的权限',
@@ -5215,6 +5220,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: '请求打印',
+    requestNotice: '此打印将提交审批。有审批权限的人员启动后，将在所选打印机上开始打印。',
     variants: {
       editNote: '这些备选在任务加入队列时确定。如需更改，请取消后重新加入队列。',
       title: '打印机备选',
@@ -6334,6 +6341,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: '打印请求',
+    approvalRequestedDescription: '有打印请求正在等待审批',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

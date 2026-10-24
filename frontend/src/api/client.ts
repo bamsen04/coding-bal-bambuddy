@@ -2623,6 +2623,7 @@ export interface PrintQueueItem {
   require_previous_success: boolean;
   auto_off_after: boolean;
   manual_start: boolean;  // Requires manual trigger to start (staged)
+  requires_approval?: boolean;  // Print request (queue:request) waiting for a queue:approve holder
   // Set by the dispatch scheduler when the assigned spool can't satisfy
   // any required slot's grams (#1496). Surfaced on the queue row as a
   // "filament short" badge; cleared on a successful ▶ click (live recheck).
@@ -3061,6 +3062,7 @@ export interface NotificationProvider {
   on_stock_break_alert: boolean;
   // Print queue events
   on_queue_job_added: boolean;
+  on_queue_approval_requested: boolean;
   on_queue_job_assigned: boolean;
   on_queue_job_started: boolean;
   on_queue_job_waiting: boolean;
@@ -3130,6 +3132,7 @@ export interface NotificationProviderCreate {
   on_stock_break_alert?: boolean;
   // Print queue events
   on_queue_job_added?: boolean;
+  on_queue_approval_requested?: boolean;
   on_queue_job_assigned?: boolean;
   on_queue_job_started?: boolean;
   on_queue_job_waiting?: boolean;
@@ -3192,6 +3195,7 @@ export interface NotificationProviderUpdate {
   on_stock_break_alert?: boolean;
   // Print queue events
   on_queue_job_added?: boolean;
+  on_queue_approval_requested?: boolean;
   on_queue_job_assigned?: boolean;
   on_queue_job_started?: boolean;
   on_queue_job_waiting?: boolean;
@@ -4256,7 +4260,7 @@ export type Permission =
   | 'archives:read' | 'archives:read_own' | 'archives:read_all' | 'archives:create'
   | 'archives:update_own' | 'archives:update_all' | 'archives:delete_own' | 'archives:delete_all'
   | 'archives:reprint_own' | 'archives:reprint_all' | 'archives:purge'
-  | 'queue:read' | 'queue:read_own' | 'queue:read_all' | 'queue:create'
+  | 'queue:read' | 'queue:read_own' | 'queue:read_all' | 'queue:create' | 'queue:request' | 'queue:approve'
   | 'queue:update_own' | 'queue:update_all' | 'queue:delete_own' | 'queue:delete_all'
   | 'queue:reorder'
   | 'library:read' | 'library:read_own' | 'library:read_all' | 'library:upload'

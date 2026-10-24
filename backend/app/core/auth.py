@@ -317,6 +317,13 @@ _APIKEY_DENIED_PERMISSIONS: frozenset[Permission] = frozenset(
         # entries here — a key that may run a pipeline cannot rewrite what it
         # does.
         Permission.PIPELINES_WRITE,
+        # Print approval. QUEUE_REQUEST exists to put a human between a user and
+        # the printer; a key carries no user identity on the routes (they see
+        # None), so it could not be held to the "always staged" rule. A key that
+        # may queue at all does so through QUEUE_CREATE. QUEUE_APPROVE is the
+        # human on the other side of that, and stays with signed-in users too.
+        Permission.QUEUE_REQUEST,
+        Permission.QUEUE_APPROVE,
     }
 )
 

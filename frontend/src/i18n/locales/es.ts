@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Solicitud de impresión enviada para aprobación',
     filamentShort: {
       rowBadge: 'Filamento insuficiente para la bobina asignada',
       rowTooltip: 'El planificador marco este elemento. Pulsa Reproducir para ver el deficit por slot y decidir si imprimir de todos modos.',
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Pendiente de aprobación',
       staged: 'Preparado',
       requiresPrevious: 'Requiere éxito previo',
       autoPowerOff: 'Apagado automático',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Aprobar e iniciar impresión',
+      rejectRequest: 'Rechazar solicitud',
       startPrint: 'Iniciar impresión',
       stopPrint: 'Detener impresión',
       requeue: 'Volver a encolar',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Esta impresión está pendiente de aprobación',
       noStopPrint: 'No tiene permiso para detener impresiones',
       noStartPrint: 'No tiene permiso para iniciar impresiones',
       noEdit: 'No tiene permiso para editar este elemento de la cola',
@@ -5236,6 +5241,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Solicitar impresión',
+    requestNotice: 'Esta impresión se enviará para su aprobación. Comenzará en la impresora elegida cuando alguien con permiso de aprobación la inicie.',
     variants: {
       editNote: 'Estas alternativas se fijaron al poner el trabajo en cola. Cancela y vuelve a encolar para cambiarlas.',
       title: 'Alternativas de impresora',
@@ -6356,6 +6363,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Solicitud de impresión',
+    approvalRequestedDescription: 'Una solicitud de impresión está pendiente de aprobación',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

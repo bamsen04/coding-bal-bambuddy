@@ -104,6 +104,7 @@ def _provider_to_dict(provider: NotificationProvider) -> dict:
         "on_stock_break_alert": provider.on_stock_break_alert,
         # Print queue events
         "on_queue_job_added": provider.on_queue_job_added,
+        "on_queue_approval_requested": provider.on_queue_approval_requested,
         "on_queue_job_assigned": provider.on_queue_job_assigned,
         "on_queue_job_started": provider.on_queue_job_started,
         "on_queue_job_waiting": provider.on_queue_job_waiting,
@@ -199,6 +200,7 @@ async def create_notification_provider(
         on_stock_break_alert=provider_data.on_stock_break_alert,
         # Print queue events
         on_queue_job_added=provider_data.on_queue_job_added,
+        on_queue_approval_requested=provider_data.on_queue_approval_requested,
         on_queue_job_assigned=provider_data.on_queue_job_assigned,
         on_queue_job_started=provider_data.on_queue_job_started,
         on_queue_job_waiting=provider_data.on_queue_job_waiting,

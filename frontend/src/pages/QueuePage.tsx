@@ -43,6 +43,7 @@ import {
   ArrowUp,
   ArrowDown,
   Hand,
+  ShieldCheck,
   Check,
   CheckSquare,
   Square,
@@ -557,6 +558,12 @@ function SortableQueueItem({
 }) {
   const hasPhysicalAmsMapping =
     item.printer_id != null && (item.ams_mapping?.some((trayId) => trayId >= 0) ?? false);
+  // A print request (queue:request) is the approver's to start, edit or reject,
+  // whoever made it -- and nobody else's, the requester included.
+  const awaitingApproval = !!item.requires_approval;
+  const canApprove = hasPermission('queue:approve');
+  const canUpdatePending = awaitingApproval ? canApprove : canModify('queue', 'update', item.created_by_id);
+  const canDeletePending = awaitingApproval ? canApprove : canModify('queue', 'delete', item.created_by_id);
 
   // Printing rows already need live status for progress. A queued item with a
   // stored AMS mapping also needs it so the card can turn global tray ids into
@@ -938,7 +945,12 @@ function SortableQueueItem({
 
           {/* Options badges */}
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
-            {item.manual_start && (
+            {awaitingApproval ? (
+              <span className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-500/20 flex items-center gap-1">
+                <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                {t('queue.badges.awaitingApproval')}
+              </span>
+            ) : item.manual_start && (
               <span className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 rounded-full border border-purple-200 dark:border-purple-500/20 flex items-center gap-1">
                 <Hand className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 {t('queue.badges.staged')}
@@ -1082,8 +1094,12 @@ function SortableQueueItem({
                     variant="ghost"
                     size="sm"
                     onClick={onStart}
-                    disabled={!canModify('queue', 'update', item.created_by_id)}
-                    title={!canModify('queue', 'update', item.created_by_id) ? t('queue.permissions.noStartPrint') : t('queue.actions.startPrint')}
+                    disabled={!canUpdatePending}
+                    title={
+                      awaitingApproval
+                        ? (canApprove ? t('queue.actions.approvePrint') : t('queue.permissions.awaitingApproval'))
+                        : (canUpdatePending ? t('queue.actions.startPrint') : t('queue.permissions.noStartPrint'))
+                    }
                     className="text-bambu-green hover:text-bambu-green-light hover:bg-bambu-green/10 p-1.5 sm:p-2"
                   >
                     <Play className="w-4 h-4" />
@@ -1093,8 +1109,12 @@ function SortableQueueItem({
                   variant="ghost"
                   size="sm"
                   onClick={onEdit}
-                  disabled={!canModify('queue', 'update', item.created_by_id)}
-                  title={!canModify('queue', 'update', item.created_by_id) ? t('queue.permissions.noEdit') : t('common.edit')}
+                  disabled={!canUpdatePending}
+                  title={
+                    canUpdatePending
+                      ? t('common.edit')
+                      : awaitingApproval ? t('queue.permissions.awaitingApproval') : t('queue.permissions.noEdit')
+                  }
                   className="p-1.5 sm:p-2"
                 >
                   <Pencil className="w-4 h-4" />
@@ -1103,8 +1123,12 @@ function SortableQueueItem({
                   variant="ghost"
                   size="sm"
                   onClick={onCancel}
-                  disabled={!canModify('queue', 'delete', item.created_by_id)}
-                  title={!canModify('queue', 'delete', item.created_by_id) ? t('queue.permissions.noCancel') : t('common.cancel')}
+                  disabled={!canDeletePending}
+                  title={
+                    canDeletePending
+                      ? (awaitingApproval ? t('queue.actions.rejectRequest') : t('common.cancel'))
+                      : awaitingApproval ? t('queue.permissions.awaitingApproval') : t('queue.permissions.noCancel')
+                  }
                   className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 p-1.5 sm:p-2"
                 >
                   <X className="w-4 h-4" />

@@ -1340,6 +1340,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Print request sent for approval',
     title: 'Print Queue',
     subtitle: 'Schedule and manage your print jobs',
     filamentShort: {
@@ -1525,6 +1526,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Awaiting approval',
       staged: 'Staged',
       requiresPrevious: 'Requires previous success',
       autoPowerOff: 'Auto power off',
@@ -1549,6 +1551,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Approve and start print',
+      rejectRequest: 'Reject request',
       startPrint: 'Start Print',
       stopPrint: 'Stop Print',
       requeue: 'Re-queue',
@@ -1661,6 +1665,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'This print is waiting for approval by an approver',
       noStopPrint: 'You do not have permission to stop prints',
       noStartPrint: 'You do not have permission to start prints',
       noEdit: 'You do not have permission to edit this queue item',
@@ -5274,6 +5279,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Request print',
+    requestNotice: 'This print will be sent for approval. It starts on the chosen printer once someone with approval rights starts it.',
     variants: {
       editNote: 'These alternatives were set when the job was queued. Cancel and re-queue to change them.',
       title: 'Printer alternatives',
@@ -6399,6 +6406,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Print Request',
+    approvalRequestedDescription: 'A print request is waiting for approval',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

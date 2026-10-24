@@ -1282,6 +1282,7 @@ export default {
   },
 
   queue: {
+    printRequested: '인쇄 요청을 승인 대기로 보냈습니다',
     title: '인쇄 대기열',
     subtitle: '인쇄 작업을 예약하고 관리하세요',
     editQueueItem: '대기열 항목 편집',
@@ -1440,6 +1441,7 @@ export default {
       descendingNewest: '내림차순 (최신 것 먼저)'
     },
     badges: {
+      awaitingApproval: '승인 대기',
       staged: '준비됨',
       requiresPrevious: '이전 성공 필요',
       autoPowerOff: '자동 전원 끄기',
@@ -1461,6 +1463,8 @@ export default {
       inHours: '{{count}}시간 후'
     },
     actions: {
+      approvePrint: '승인하고 인쇄 시작',
+      rejectRequest: '요청 거부',
       startPrint: '인쇄 시작',
       stopPrint: '인쇄 정지',
       requeue: '재대기'
@@ -1567,6 +1571,7 @@ export default {
       printerColumnHeader: '프린터',
     },
     permissions: {
+      awaitingApproval: '이 인쇄는 승인자의 승인을 기다리고 있습니다',
       noStopPrint: '인쇄를 정지할 권한이 없습니다',
       noStartPrint: '인쇄를 시작할 권한이 없습니다',
       noEdit: '이 대기열 항목을 편집할 권한이 없습니다',
@@ -4997,6 +5002,8 @@ export default {
     emptySlotReset: '필라멘트가 할당되지 않음'
   },
   printModal: {
+    requestPrint: '인쇄 요청',
+    requestNotice: '이 인쇄는 승인을 위해 전송됩니다. 승인 권한이 있는 사람이 시작하면 선택한 프린터에서 시작됩니다.',
     variants: {
       editNote: '이 대안은 대기열에 추가할 때 정해집니다. 변경하려면 취소 후 다시 추가하세요.',
       title: '프린터 대안',
@@ -6070,6 +6077,8 @@ export default {
     delayAfterDryingMinutes: '건조 후 지연 (분)'
   },
   notifications: {
+    approvalRequested: '인쇄 요청',
+    approvalRequestedDescription: '인쇄 요청이 승인을 기다리고 있습니다',
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',
       ntfy: 'ntfy',

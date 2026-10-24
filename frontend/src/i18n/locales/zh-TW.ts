@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: '列印請求已送出審核',
     filamentShort: {
       rowBadge: '所分配料盤的線材不足',
       rowTooltip: '調度程式已標記此項目。點擊播放查看各槽位的不足量，並決定是否仍要列印。',
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: '等待審核',
       staged: '已暫存',
       requiresPrevious: '需要前一個成功',
       autoPowerOff: '自動關機',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: '核准並開始列印',
+      rejectRequest: '拒絕請求',
       startPrint: '開始列印',
       stopPrint: '停止列印',
       requeue: '重新佇列',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: '此列印正在等待審核',
       noStopPrint: '您沒有停止列印的權限',
       noStartPrint: '您沒有開始列印的權限',
       noEdit: '您沒有編輯此佇列項目的權限',
@@ -5215,6 +5220,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: '請求列印',
+    requestNotice: '此列印將送出審核。具審核權限的人員啟動後，將在所選印表機上開始列印。',
     variants: {
       editNote: '這些備選在工作加入佇列時確定。如需變更，請取消後重新加入佇列。',
       title: '印表機備選',
@@ -6334,6 +6341,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: '列印請求',
+    approvalRequestedDescription: '有列印請求正在等待審核',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

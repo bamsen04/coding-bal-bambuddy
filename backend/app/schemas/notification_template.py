@@ -99,6 +99,7 @@ EVENT_VARIABLES: dict[str, list[str]] = {
     "test": ["app_name", "timestamp"],
     # Queue notifications
     "queue_job_added": ["job_name", "target", "timestamp", "app_name"],
+    "queue_approval_requested": ["job_name", "target", "requested_by", "timestamp", "app_name"],
     "queue_job_assigned": ["job_name", "printer", "target_model", "timestamp", "app_name"],
     "queue_job_started": ["printer", "job_name", "estimated_time", "eta", "timestamp", "app_name"],
     "queue_job_waiting": ["job_name", "target_model", "waiting_reason", "timestamp", "app_name"],
@@ -330,6 +331,13 @@ SAMPLE_DATA: dict[str, dict[str, str]] = {
     "queue_job_added": {
         "job_name": "Benchy.3mf",
         "target": "Bambu X1C",
+        "timestamp": "2024-01-15 14:30",
+        "app_name": "Bambuddy",
+    },
+    "queue_approval_requested": {
+        "job_name": "Benchy.3mf",
+        "target": "Bambu X1C",
+        "requested_by": "alice",
         "timestamp": "2024-01-15 14:30",
         "app_name": "Bambuddy",
     },

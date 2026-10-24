@@ -597,6 +597,17 @@ export function NotificationProviderCard({ provider, onEdit }: NotificationProvi
 
                 <div className="flex items-center justify-between">
                   <div>
+                    <p className="text-sm text-white">{t('notifications.approvalRequested')}</p>
+                    <p className="text-xs text-bambu-gray">{t('notifications.approvalRequestedDescription')}</p>
+                  </div>
+                  <Toggle
+                    checked={provider.on_queue_approval_requested ?? true}
+                    onChange={(checked) => updateMutation.mutate({ on_queue_approval_requested: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
                     <p className="text-sm text-white">{t('notifications.jobAssigned')}</p>
                     <p className="text-xs text-bambu-gray">{t('notifications.jobAssignedDescription')}</p>
                   </div>

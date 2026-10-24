@@ -1789,8 +1789,10 @@ class PrintScheduler:
                         skip_reasons["scheduled_future"] = skip_reasons.get("scheduled_future", 0) + 1
                         continue
 
-                # Skip items that require manual start
-                if item.manual_start:
+                # Skip items that require manual start. A print request is
+                # staged as well; requires_approval is checked too so that a
+                # path clearing only manual_start still cannot release one.
+                if item.manual_start or item.requires_approval:
                     # Waiting on the user, not on a printer. Cleared here because
                     # this is the last pass that will look at the row: a staged
                     # item never reaches the branches below again, so a reason

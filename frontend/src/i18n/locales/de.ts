@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Druckanfrage zur Freigabe gesendet',
     filamentShort: {
       rowBadge: 'Filament fuer die zugewiesene Spule reicht nicht',
       rowTooltip: 'Der Dispatcher hat diese Position markiert. Klicke auf Play, um den Pro-Slot-Fehlbestand zu sehen und zu entscheiden, ob trotzdem gedruckt werden soll.',
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Wartet auf Freigabe',
       staged: 'Bereitgestellt',
       requiresPrevious: 'Erfordert vorherigen Erfolg',
       autoPowerOff: 'Automatisch ausschalten',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Freigeben und Druck starten',
+      rejectRequest: 'Anfrage ablehnen',
       startPrint: 'Druck starten',
       stopPrint: 'Druck stoppen',
       requeue: 'Erneut einreihen',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Dieser Druck wartet auf Freigabe durch eine berechtigte Person',
       noStopPrint: 'Sie haben keine Berechtigung, Drucke zu stoppen',
       noStartPrint: 'Sie haben keine Berechtigung, Drucke zu starten',
       noEdit: 'Sie haben keine Berechtigung, dieses Warteschlangenelement zu bearbeiten',
@@ -5229,6 +5234,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Druck anfragen',
+    requestNotice: 'Dieser Druck wird zur Freigabe gesendet. Er startet auf dem gewählten Drucker, sobald ihn jemand mit Freigaberecht startet.',
     variants: {
       editNote: 'Diese Alternativen wurden beim Einreihen festgelegt. Zum Ändern abbrechen und neu einreihen.',
       title: 'Drucker-Alternativen',
@@ -6348,6 +6355,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Druckanfrage',
+    approvalRequestedDescription: 'Eine Druckanfrage wartet auf Freigabe',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

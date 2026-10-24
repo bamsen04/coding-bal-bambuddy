@@ -1340,6 +1340,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Printverzoek ter goedkeuring verzonden',
     title: 'Afdrukwachtrij',
     subtitle: 'Plan en beheer je afdruktaken',
     filamentShort: {
@@ -1525,6 +1526,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Wacht op goedkeuring',
       staged: 'Gereed voor handmatige start',
       requiresPrevious: 'Vereist dat vorige taak slaagt',
       autoPowerOff: 'Automatisch uitschakelen',
@@ -1549,6 +1551,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Goedkeuren en print starten',
+      rejectRequest: 'Verzoek afwijzen',
       startPrint: 'Afdruk starten',
       stopPrint: 'Afdruk stoppen',
       requeue: 'Opnieuw in wachtrij plaatsen',
@@ -1661,6 +1665,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Deze print wacht op goedkeuring',
       noStopPrint: 'Je hebt geen toestemming om afdrukken te stoppen',
       noStartPrint: 'Je hebt geen toestemming om afdrukken te starten',
       noEdit: 'Je hebt geen toestemming om dit wachtrij-item te bewerken',
@@ -5274,6 +5279,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Print aanvragen',
+    requestNotice: 'Deze print wordt ter goedkeuring verzonden. Hij start op de gekozen printer zodra iemand met goedkeuringsrechten hem start.',
     variants: {
       editNote: 'Deze alternatieven zijn ingesteld toen de taak in de wachtrij werd geplaatst. Annuleer en plaats opnieuw in de wachtrij om ze te wijzigen.',
       title: 'Printeralternatieven',
@@ -6399,6 +6406,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Printverzoek',
+    approvalRequestedDescription: 'Een printverzoek wacht op goedkeuring',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

@@ -194,6 +194,9 @@ async def webhook_start_print(
         .where(
             PrintQueueItem.printer_id == printer_id,
             PrintQueueItem.status == "pending",
+            # A print request is approved by a signed-in queue:approve holder,
+            # never by a key, so the webhook passes over it.
+            PrintQueueItem.requires_approval == False,  # noqa: E712
         )
         .order_by(PrintQueueItem.position)
         .limit(1)

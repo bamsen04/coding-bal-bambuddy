@@ -181,6 +181,11 @@ const stopRowActivation = {
   onDoubleClick: (e: React.MouseEvent) => e.stopPropagation(),
 };
 
+// Print opens the print dialog for either permission: queue:request users get
+// it in request mode (staged, sent for approval) instead of a disabled button.
+const canRequestOrQueue = (hasPermission: (permission: Permission) => boolean) =>
+  hasPermission('queue:create') || hasPermission('queue:request');
+
 // Whether the preview is the 3D one, which has its own menu label.
 function isModelPreview(file: LibraryFileListItem): boolean {
   return isSlicedLibraryFile(file) || file.file_type === '3mf' || file.file_type === 'stl' || isStepType(file.file_type);
@@ -1044,8 +1049,8 @@ function FileCard({ file, isSelected, onSelect, onDelete, onDownload, onPrint, o
       // its own labels; only the icon carries the accent.
       icon: <Printer className="w-4 h-4 text-bambu-green" />,
       onClick: () => onPrint(file),
-      disabled: !hasPermission('queue:create'),
-      title: !hasPermission('queue:create') ? t('fileManager.noPermissionAddToQueue') : undefined,
+      disabled: !canRequestOrQueue(hasPermission),
+      title: !canRequestOrQueue(hasPermission) ? t('fileManager.noPermissionAddToQueue') : undefined,
     });
   }
   if (isSliceableLibraryFile(file, !!useSlicerApi, desktopSlicer) && (useSlicerApi ? onSlice : onOpenInSlicer)) {
@@ -1339,14 +1344,14 @@ function FileActionStrip({ file, onPrint, onSlice, onOpenInSlicer, onRunPipeline
       {isSlicedLibraryFile(file) && (
         <button
           tabIndex={tabIndex}
-          onClick={() => hasPermission('queue:create') && onPrint(file)}
+          onClick={() => canRequestOrQueue(hasPermission) && onPrint(file)}
           className={`p-1.5 rounded transition-colors ${
-            hasPermission('queue:create')
+            canRequestOrQueue(hasPermission)
               ? 'hover:bg-bambu-dark text-bambu-gray hover:text-bambu-green'
               : 'text-bambu-gray/50 cursor-not-allowed'
           }`}
-          title={hasPermission('queue:create') ? t('common.print') : t('fileManager.noPermissionAddToQueue')}
-          disabled={!hasPermission('queue:create')}
+          title={canRequestOrQueue(hasPermission) ? t('common.print') : t('fileManager.noPermissionAddToQueue')}
+          disabled={!canRequestOrQueue(hasPermission)}
         >
           <Printer className="w-4 h-4" />
         </button>
@@ -3273,8 +3278,8 @@ export function FileManagerPage() {
                         variant="primary"
                         size="sm"
                         onClick={() => setPrintFile(selectedSlicedFiles[0])}
-                        disabled={!hasPermission('queue:create')}
-                        title={!hasPermission('queue:create') ? t('fileManager.noPermissionAddToQueue') : undefined}
+                        disabled={!canRequestOrQueue(hasPermission)}
+                        title={!canRequestOrQueue(hasPermission) ? t('fileManager.noPermissionAddToQueue') : undefined}
                       >
                         <Printer className="w-4 h-4 sm:mr-1" />
                         <span className="hidden sm:inline">
