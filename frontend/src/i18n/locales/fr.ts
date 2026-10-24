@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Demande d\'impression envoyée pour approbation',
     filamentShort: {
       rowBadge: 'Filament insuffisant pour la bobine assignee',
       rowTooltip: "Le planificateur a signale cet element. Cliquez sur Lecture pour voir le deficit par emplacement et decider de lancer quand meme l'impression.",
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'En attente d\'approbation',
       staged: 'Préparé',
       requiresPrevious: 'Nécessite succès précédent',
       autoPowerOff: 'Extinction auto',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Approuver et lancer l\'impression',
+      rejectRequest: 'Refuser la demande',
       startPrint: 'Démarrer',
       stopPrint: 'Arrêter',
       requeue: 'Remettre en file',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Cette impression attend l\'approbation d\'un approbateur',
       noStopPrint: 'Pas d\'autorisation d\'arrêt',
       noStartPrint: 'Pas d\'autorisation de démarrage',
       noEdit: 'Pas d\'autorisation de modification',
@@ -5216,6 +5221,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Demander l\'impression',
+    requestNotice: 'Cette impression sera envoyée pour approbation. Elle démarrera sur l\'imprimante choisie dès qu\'une personne autorisée la lancera.',
     variants: {
       editNote: 'Ces alternatives ont été définies lors de la mise en file. Annulez et remettez en file pour les modifier.',
       title: 'Alternatives d\'imprimante',
@@ -6336,6 +6343,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Demande d\'impression',
+    approvalRequestedDescription: 'Une demande d\'impression attend une approbation',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

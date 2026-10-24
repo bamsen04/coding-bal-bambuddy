@@ -2622,6 +2622,32 @@ class NotificationService:
             providers, title, message, db, "queue_job_added", printer_id, printer_name, variables=variables
         )
 
+    async def on_queue_approval_requested(
+        self,
+        job_name: str,
+        target: str,
+        requested_by: str,
+        db: AsyncSession,
+        printer_id: int | None = None,
+        printer_name: str | None = None,
+    ):
+        """Handle a print request (queue:request) waiting for an approver."""
+        providers = await self._get_providers_for_event(db, "on_queue_approval_requested", printer_id)
+        if not providers:
+            return
+
+        variables = {
+            "job_name": job_name,
+            "target": target,
+            "requested_by": requested_by,
+            "printer": printer_name or target,
+        }
+
+        title, message = await self._build_message_from_template(db, "queue_approval_requested", variables)
+        await self._send_to_providers(
+            providers, title, message, db, "queue_approval_requested", printer_id, printer_name, variables=variables
+        )
+
     async def on_queue_job_assigned(
         self,
         job_name: str,

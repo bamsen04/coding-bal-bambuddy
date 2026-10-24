@@ -1329,6 +1329,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: '印刷リクエストを承認待ちとして送信しました',
     filamentShort: {
       rowBadge: '割り当てられたスプールのフィラメントが不足しています',
       rowTooltip: 'スケジューラーがこのアイテムをフラグしました。再生ボタンをクリックしてスロットごとの不足量を確認し、それでも印刷するか判断してください。',
@@ -1508,6 +1509,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: '承認待ち',
       staged: 'ステージ済み',
       requiresPrevious: '前の成功が必要',
       autoPowerOff: '自動電源オフ',
@@ -1532,6 +1534,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: '承認して印刷を開始',
+      rejectRequest: 'リクエストを却下',
       startPrint: '印刷を開始',
       stopPrint: '印刷を停止',
       requeue: '再キュー',
@@ -1643,6 +1647,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'この印刷は承認者の承認待ちです',
       noStopPrint: '印刷を停止する権限がありません',
       noStartPrint: '印刷を開始する権限がありません',
       noEdit: 'このキューアイテムを編集する権限がありません',
@@ -5229,6 +5234,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: '印刷をリクエスト',
+    requestNotice: 'この印刷は承認のために送信されます。承認権限を持つユーザーが開始すると、選択したプリンターで印刷されます。',
     variants: {
       editNote: 'これらの候補はキュー追加時に決まります。変更するにはキャンセルして追加し直してください。',
       title: 'プリンターの候補',
@@ -6349,6 +6356,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: '印刷リクエスト',
+    approvalRequestedDescription: '印刷リクエストが承認待ちです',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

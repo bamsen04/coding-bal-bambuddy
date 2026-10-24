@@ -200,6 +200,8 @@ class PrintQueueItemResponse(BaseModel):
     require_previous_success: bool
     auto_off_after: bool
     manual_start: bool
+    # Requested via queue:request and waiting for a queue:approve holder.
+    requires_approval: bool = False
     # True when the dispatch scheduler last evaluated this item and the
     # assigned spool could not satisfy at least one slot's required grams
     # (#1496). Display-only — the ▶ click recomputes deficit against live

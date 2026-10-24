@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Clock, Hand, Power, Layers, Code, ListOrdered } from 'lucide-react';
+import { Calendar, Clock, Hand, Power, Layers, Code, ListOrdered, ShieldCheck } from 'lucide-react';
 import type { ScheduleOptionsProps, ScheduleType } from './types';
 import {
   formatDateInput,
@@ -29,6 +29,7 @@ export function ScheduleOptionsPanel({
   showStagger = false,
   printerCount = 0,
   hasGcodeSnippets = false,
+  requestOnly = false,
 }: ScheduleOptionsProps) {
   const { t } = useTranslation();
   const [dateValue, setDateValue] = useState('');
@@ -125,7 +126,16 @@ export function ScheduleOptionsPanel({
 
   return (
     <div className="space-y-4">
+      {/* A request has no "when": it waits for an approver to start it */}
+      {requestOnly && (
+        <div className="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg text-sm text-amber-800 dark:text-amber-300 flex items-start gap-2">
+          <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" />
+          <span>{t('printModal.requestNotice')}</span>
+        </div>
+      )}
+
       {/* Schedule type */}
+      {!requestOnly && (
       <div>
         <label className="block text-sm text-bambu-gray mb-2">{t('printModal.whenToPrint')}</label>
         <div className="flex gap-2">
@@ -167,6 +177,7 @@ export function ScheduleOptionsPanel({
           </button>
         </div>
       </div>
+      )}
 
       {/* Scheduled time input */}
       {options.scheduleType === 'scheduled' && (
@@ -228,7 +239,7 @@ export function ScheduleOptionsPanel({
       )}
 
       {/* Manual start */}
-      {options.scheduleType === 'queue' && (
+      {options.scheduleType === 'queue' && !requestOnly && (
         <div className="flex items-center gap-2">
           <input
             type="checkbox"

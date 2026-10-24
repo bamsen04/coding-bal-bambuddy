@@ -1339,6 +1339,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Запит на друк надіслано на схвалення',
     title: "Черга друку",
     subtitle: "Плануйте завдання друку та керуйте ними",
     filamentShort: {
@@ -1524,6 +1525,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Очікує схвалення',
       staged: "Очікує ручного запуску",
       requiresPrevious: "Потрібне успішне завершення попереднього завдання",
       autoPowerOff: "Автоматичне вимкнення",
@@ -1548,6 +1550,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Схвалити й почати друк',
+      rejectRequest: 'Відхилити запит',
       startPrint: "Розпочати друк",
       stopPrint: "Зупинити друк",
       requeue: "Поставити в чергу знову",
@@ -1660,6 +1664,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Цей друк очікує схвалення',
       noStopPrint: "Ви не маєте дозволу зупиняти друк",
       noStartPrint: "Ви не маєте дозволу розпочинати друк",
       noEdit: "Ви не маєте дозволу редагувати цей елемент черги",
@@ -5269,6 +5274,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Запросити друк',
+    requestNotice: 'Цей друк буде надіслано на схвалення. Він почнеться на вибраному принтері, коли його запустить користувач із правом схвалення.',
     variants: {
       editNote: 'Ці варіанти задано під час додавання в чергу. Щоб змінити, скасуйте та додайте знову.',
       title: 'Варіанти принтера',
@@ -6389,6 +6396,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Запит на друк',
+    approvalRequestedDescription: 'Запит на друк очікує схвалення',
     // Provider types
     providerTypes: {
       callmebot: "CallMeBot/WhatsApp",

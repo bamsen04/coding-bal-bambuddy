@@ -1330,6 +1330,7 @@ export default {
   },
 
   queue: {
+    printRequested: 'Baskı isteği onaya gönderildi',
     title: 'Baskı Kuyruğu',
     subtitle: 'Baskı işlerinizi zamanlayın ve yönetin',
     filamentShort: {
@@ -1509,6 +1510,7 @@ export default {
     },
     // Rozetler
     badges: {
+      awaitingApproval: 'Onay bekliyor',
       staged: 'Hazırlandı',
       requiresPrevious: 'Önceki başarı gerekli',
       autoPowerOff: 'Otomatik kapanma',
@@ -1533,6 +1535,8 @@ export default {
     },
     // İşlemler
     actions: {
+      approvePrint: 'Onayla ve baskıyı başlat',
+      rejectRequest: 'İsteği reddet',
       startPrint: 'Baskıyı Başlat',
       stopPrint: 'Baskıyı Durdur',
       requeue: 'Yeniden Kuyrukla',
@@ -1644,6 +1648,7 @@ export default {
     },
     // İzinler
     permissions: {
+      awaitingApproval: 'Bu baskı onay bekliyor',
       noStopPrint: 'Baskıları durdurma izniniz yok',
       noStartPrint: 'Baskıları başlatma izniniz yok',
       noEdit: 'Bu kuyruk öğesini düzenleme izniniz yok',
@@ -5204,6 +5209,8 @@ export default {
 
   // Baskı modali
   printModal: {
+    requestPrint: 'Baskı iste',
+    requestNotice: 'Bu baskı onaya gönderilecek. Onay yetkisi olan biri başlattığında seçilen yazıcıda başlar.',
     variants: {
       editNote: 'Bu alternatifler iş kuyruğa alınırken belirlendi. Değiştirmek için iptal edip yeniden kuyruğa alın.',
       title: 'Yazıcı alternatifleri',
@@ -6308,6 +6315,8 @@ export default {
 
   // Bildirimler
   notifications: {
+    approvalRequested: 'Baskı İsteği',
+    approvalRequestedDescription: 'Bir baskı isteği onay bekliyor',
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',
       ntfy: 'ntfy',

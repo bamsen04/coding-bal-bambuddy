@@ -43,6 +43,7 @@ EVENT_NAMES = {
     "test": "Test Notification",
     # Queue notifications
     "queue_job_added": "Queue Job Added",
+    "queue_approval_requested": "Print Request Awaiting Approval",
     "queue_job_assigned": "Queue Job Assigned",
     "queue_job_started": "Queue Job Started",
     "queue_job_waiting": "Queue Job Waiting",

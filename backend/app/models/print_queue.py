@@ -46,6 +46,9 @@ class PrintQueueItem(Base):
     position: Mapped[int] = mapped_column(Integer, default=0)  # Queue order
     scheduled_time: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)  # None = ASAP
     manual_start: Mapped[bool] = mapped_column(Boolean, default=False)  # Requires manual trigger to start
+    # Created through QUEUE_REQUEST: held until a QUEUE_APPROVE holder starts it,
+    # and nobody else may change it meanwhile. Cleared by that start.
+    requires_approval: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Conditions
     require_previous_success: Mapped[bool] = mapped_column(Boolean, default=False)

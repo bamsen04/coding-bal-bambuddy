@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Solicitação de impressão enviada para aprovação',
     filamentShort: {
       rowBadge: 'Filamento insuficiente para a bobina atribuida',
       rowTooltip: 'O escalonador sinalizou este item. Clique em Play para ver o deficit por slot e decidir se quer imprimir mesmo assim.',
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'Aguardando aprovação',
       staged: 'Preparado (início manual)',
       requiresPrevious: 'Requer sucesso anterior',
       autoPowerOff: 'Desligamento automático',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Aprovar e iniciar impressão',
+      rejectRequest: 'Rejeitar solicitação',
       startPrint: 'Iniciar Impressão',
       stopPrint: 'Parar Impressão',
       requeue: 'Reenfileirar',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Esta impressão está aguardando aprovação',
       noStopPrint: 'Você não tem permissão para parar impressões',
       noStartPrint: 'Você não tem permissão para iniciar impressões',
       noEdit: 'Você não tem permissão para editar este item da fila',
@@ -5215,6 +5220,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Solicitar impressão',
+    requestNotice: 'Esta impressão será enviada para aprovação. Ela começa na impressora escolhida quando alguém com permissão de aprovação a iniciar.',
     variants: {
       editNote: 'Estas alternativas foram definidas ao enfileirar o trabalho. Cancele e enfileire de novo para alterá-las.',
       title: 'Alternativas de impressora',
@@ -6335,6 +6342,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Solicitação de impressão',
+    approvalRequestedDescription: 'Uma solicitação de impressão está aguardando aprovação',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

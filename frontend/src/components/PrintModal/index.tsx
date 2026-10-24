@@ -104,6 +104,10 @@ export function PrintModal({
   // Determine if we're printing a library file
   const isLibraryFile = !!libraryFileId && !archiveId;
   const isEditing = mode === 'edit-queue-item';
+  // queue:request without queue:create: the print becomes a request, staged on
+  // the chosen printer or model until someone with queue:approve starts it. The
+  // server enforces this; the dialog just doesn't offer what it would refuse.
+  const isRequestOnly = mode === 'create' && !hasPermission('queue:create') && hasPermission('queue:request');
 
   // Cross-model alternatives (#671). One candidate is not a choice, so a
   // single-entry list behaves exactly like an ordinary print.
@@ -209,6 +213,9 @@ export function PrintModal({
         staggerGroupSize: DEFAULT_SCHEDULE_OPTIONS.staggerGroupSize,
         staggerIntervalMinutes: DEFAULT_SCHEDULE_OPTIONS.staggerIntervalMinutes,
       };
+    }
+    if (isRequestOnly) {
+      return { ...DEFAULT_SCHEDULE_OPTIONS, scheduleType: 'queue', requireManualStart: true };
     }
     return DEFAULT_SCHEDULE_OPTIONS;
   });
@@ -1205,8 +1212,11 @@ export function PrintModal({
       };
     });
     const totalRuns = plateTargets.reduce((sum, target) => sum + target.quantity_target, 0);
+    // Creating an order needs queue:create, so a request never gets one; the
+    // server still groups quantity > 1 into a plain batch.
     const shouldAutoBatch =
       mode === 'create'
+      && !isRequestOnly
       && (platesToQueue.length > 1 || totalRuns > 1)
       && (assignmentMode === 'model' || selectedPrinters.length === 1);
     let autoBatchId: number | null = null;
@@ -1431,6 +1441,8 @@ export function PrintModal({
         if (mode === 'edit-queue-item') {
           showToast('Queue item updated');
         }
+      } else if (isRequestOnly) {
+        showToast(t('queue.printRequested'));
       } else if (results.success === 1) {
         const waitForIdleToast = await asapToastShouldPromiseLaterStart();
         showToast(
@@ -1552,7 +1564,7 @@ export function PrintModal({
       return {
         title: t('common.print'),
         icon: Printer,
-        submitText: t('common.print'),
+        submitText: isRequestOnly ? t('printModal.requestPrint') : t('common.print'),
         submitIcon: Printer,
         loadingText: submitProgress.total > 1
           ? t('queue.addingProgress', { current: submitProgress.current, total: submitProgress.total })
@@ -1974,9 +1986,10 @@ export function PrintModal({
               dateFormat={settings?.date_format || 'system'}
               timeFormat={settings?.time_format || 'system'}
               canControlPrinter={hasPermission('printers:control')}
-              showStagger={!isEditing && assignmentMode === 'printer' && selectedPrinters.length > 1}
+              showStagger={!isEditing && !isRequestOnly && assignmentMode === 'printer' && selectedPrinters.length > 1}
               printerCount={selectedPrinters.length}
               hasGcodeSnippets={!!settings?.gcode_snippets}
+              requestOnly={isRequestOnly}
             />
 
             {/* Outcome prompt (#1898) sits outside the collapsed Print Options

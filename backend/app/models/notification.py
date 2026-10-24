@@ -130,6 +130,7 @@ class NotificationProvider(Base):
 
     # Event triggers - Print queue
     on_queue_job_added = Column(Boolean, default=False)  # Job added to queue
+    on_queue_approval_requested = Column(Boolean, default=True)  # Print request waiting for an approver
     on_queue_job_assigned = Column(Boolean, default=False)  # Model-based job assigned to printer
     on_queue_job_started = Column(Boolean, default=False)  # Queue job started printing
     on_queue_job_waiting = Column(Boolean, default=True)  # Job waiting for filament or printer

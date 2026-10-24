@@ -23,8 +23,9 @@ from sqlalchemy.orm import selectinload
 
 from backend.app.api.routes.cloud import resolve_api_key_cloud_owner
 from backend.app.api.routes.library_variants import normalize_model_name, resolve_variant_model
-from backend.app.api.routes.print_queue import _extract_filament_types_from_3mf
+from backend.app.api.routes.print_queue import _extract_filament_types_from_3mf, is_request_only
 from backend.app.core.auth import (
+    require_any_permission_if_auth_enabled,
     require_media_token_ownership,
     require_ownership_permission,
     require_permission_if_auth_enabled,
@@ -77,6 +78,7 @@ from backend.app.services.design_settings import (
     overrides_from_config,
 )
 from backend.app.services.filament_requirements import annotate_rack_groups
+from backend.app.services.notification_service import notification_service
 from backend.app.services.pdf_thumbnail import generate_pdf_thumbnail
 from backend.app.services.plate_thumbnail import inject_plate_thumbnails_if_missing
 from backend.app.services.print_confirmation import confirm_outcome_for_new_queue_item
@@ -3008,9 +3010,15 @@ async def combine_files(
 async def add_files_to_queue(
     request: AddToQueueRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User | None = Depends(require_permission_if_auth_enabled(Permission.QUEUE_CREATE)),
+    current_user: User | None = Depends(
+        require_any_permission_if_auth_enabled(Permission.QUEUE_CREATE, Permission.QUEUE_REQUEST)
+    ),
 ):
     """Add library files to the print queue.
+
+    A request-only caller (QUEUE_REQUEST without QUEUE_CREATE) must name a
+    printer or model, and every item is staged until a QUEUE_APPROVE holder
+    starts it -- the same rule ``POST /queue/`` applies.
 
     Only sliced files (.gcode or .gcode.3mf) can be added to the queue.
     The archive will be created automatically when the print starts.
@@ -3030,6 +3038,10 @@ async def add_files_to_queue(
     target_model_norm = normalize_model_name(request.target_model)
     if request.printer_id is not None and target_model_norm:
         raise HTTPException(400, "Cannot specify both printer_id and target_model")
+
+    request_only = is_request_only(current_user)
+    if request_only and request.printer_id is None and not target_model_norm:
+        raise HTTPException(400, "Choose a printer or printer model for the print request")
 
     if request.printer_id is not None:
         printer_row = (await db.execute(select(Printer).where(Printer.id == request.printer_id))).scalar_one_or_none()
@@ -3181,6 +3193,8 @@ async def add_files_to_queue(
                 or (folder_projects.get(lib_file.folder_id) if lib_file.folder_id is not None else None),
                 position=max_position,
                 status="pending",
+                manual_start=request_only,
+                requires_approval=request_only,
                 confirm_outcome=confirm_outcome,
                 # Without this the row is ownerless, and `queue:read_own` filters
                 # on `created_by_id` — so the user who queued the file could not
@@ -3218,6 +3232,24 @@ async def add_files_to_queue(
         )
 
     await db.commit()
+
+    if request_only and added:
+        try:
+            if len(added) == 1:
+                job_name = added[0].filename.replace(".gcode.3mf", "").replace(".3mf", "")
+            else:
+                job_name = f"{len(added)} files"
+            printer_name = printer_row.name if request.printer_id is not None else None
+            await notification_service.on_queue_approval_requested(
+                job_name=job_name,
+                target=printer_name or f"Any {target_model_norm}",
+                requested_by=current_user.username,
+                db=db,
+                printer_id=request.printer_id,
+                printer_name=printer_name,
+            )
+        except Exception:
+            logger.warning("Failed to send approval request notification", exc_info=True)
 
     return AddToQueueResponse(added=added, errors=errors)
 

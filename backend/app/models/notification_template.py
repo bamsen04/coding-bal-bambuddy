@@ -183,6 +183,12 @@ DEFAULT_TEMPLATES = [
         "body_template": "{job_name} added to queue for {target}",
     },
     {
+        "event_type": "queue_approval_requested",
+        "name": "Print Request Awaiting Approval",
+        "title_template": "Print Request",
+        "body_template": "{requested_by} requested {job_name} on {target}",
+    },
+    {
         "event_type": "queue_job_assigned",
         "name": "Queue Job Assigned",
         "title_template": "Job Assigned",

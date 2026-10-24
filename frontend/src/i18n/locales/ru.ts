@@ -1279,6 +1279,7 @@ export default {
     },
   },
   queue: {
+    printRequested: 'Запрос на печать отправлен на одобрение',
     title: "Очередь печати",
     subtitle: "Планирование и управление заданиями печати",
     filamentShort: {
@@ -1450,6 +1451,7 @@ export default {
       descendingNewest: "По убыванию (сначала новые)",
     },
     badges: {
+      awaitingApproval: 'Ожидает одобрения',
       staged: "Подготовлено",
       requiresPrevious: "Требуется успешное предыдущее задание",
       autoPowerOff: "Автоотключение питания",
@@ -1471,6 +1473,8 @@ export default {
       inHours: "Через {{count}} ч",
     },
     actions: {
+      approvePrint: 'Одобрить и начать печать',
+      rejectRequest: 'Отклонить запрос',
       startPrint: "Запустить печать",
       stopPrint: "Остановить печать",
       requeue: "Вернуть в очередь",
@@ -1577,6 +1581,7 @@ export default {
       printerColumnHeader: "Принтер",
     },
     permissions: {
+      awaitingApproval: 'Эта печать ожидает одобрения',
       noStopPrint: "У вас нет разрешения останавливать печать",
       noStartPrint: "У вас нет разрешения запускать печать",
       noEdit: "У вас нет разрешения изменять это задание",
@@ -4986,6 +4991,8 @@ export default {
     remainingUnit: "осталось",
   },
   printModal: {
+    requestPrint: 'Запросить печать',
+    requestNotice: 'Эта печать будет отправлена на одобрение. Она начнётся на выбранном принтере, когда её запустит пользователь с правом одобрения.',
     variants: {
       editNote: 'Эти варианты заданы при добавлении в очередь. Чтобы изменить их, отмените и добавьте заново.',
       title: 'Варианты принтера',
@@ -6057,6 +6064,8 @@ export default {
     enableSwitchbarHint: "Включите «Показывать на панели переключателей» в разделе «Настройки → Умные розетки»",
   },
   notifications: {
+    approvalRequested: 'Запрос на печать',
+    approvalRequestedDescription: 'Запрос на печать ожидает одобрения',
     providerTypes: {
       callmebot: "CallMeBot/WhatsApp",
       ntfy: "ntfy",

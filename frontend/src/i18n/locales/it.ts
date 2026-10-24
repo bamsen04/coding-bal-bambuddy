@@ -1330,6 +1330,7 @@ export default {
 
   // Queue page
   queue: {
+    printRequested: 'Richiesta di stampa inviata per l\'approvazione',
     filamentShort: {
       rowBadge: 'Filamento insufficiente per la bobina assegnata',
       rowTooltip: 'Lo scheduler ha segnalato questo elemento. Premi Play per vedere il deficit per slot e decidere se stampare comunque.',
@@ -1509,6 +1510,7 @@ export default {
     },
     // Badges
     badges: {
+      awaitingApproval: 'In attesa di approvazione',
       staged: 'In staging',
       requiresPrevious: 'Richiede successo precedente',
       autoPowerOff: 'Spegnimento automatico',
@@ -1533,6 +1535,8 @@ export default {
     },
     // Actions
     actions: {
+      approvePrint: 'Approva e avvia la stampa',
+      rejectRequest: 'Rifiuta richiesta',
       startPrint: 'Avvia Stampa',
       stopPrint: 'Ferma Stampa',
       requeue: 'Rimetti in coda',
@@ -1644,6 +1648,7 @@ export default {
     },
     // Permissions
     permissions: {
+      awaitingApproval: 'Questa stampa è in attesa di approvazione',
       noStopPrint: 'Non hai il permesso di fermare stampe',
       noStartPrint: 'Non hai il permesso di avviare stampe',
       noEdit: 'Non hai il permesso di modificare questo elemento coda',
@@ -5215,6 +5220,8 @@ export default {
 
   // Print modal
   printModal: {
+    requestPrint: 'Richiedi stampa',
+    requestNotice: 'Questa stampa verrà inviata per l\'approvazione. Partirà sulla stampante scelta quando qualcuno con il permesso di approvazione la avvierà.',
     variants: {
       editNote: 'Queste alternative sono state definite al momento dell\'accodamento. Annulla e riaccoda per modificarle.',
       title: 'Alternative di stampante',
@@ -6335,6 +6342,8 @@ export default {
 
   // Notifications
   notifications: {
+    approvalRequested: 'Richiesta di stampa',
+    approvalRequestedDescription: 'Una richiesta di stampa è in attesa di approvazione',
     // Provider types
     providerTypes: {
       callmebot: 'CallMeBot/WhatsApp',

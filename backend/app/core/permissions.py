@@ -45,6 +45,11 @@ class Permission(StrEnum):
     QUEUE_READ_OWN = "queue:read_own"
     QUEUE_READ_ALL = "queue:read_all"
     QUEUE_CREATE = "queue:create"  # Create queue items, including ASAP items eligible for immediate dispatch
+    # Request a print from the library: the item is always staged on a chosen
+    # printer or model and waits for someone holding QUEUE_APPROVE to start it.
+    # Grant it instead of QUEUE_CREATE to users whose prints admins must review.
+    QUEUE_REQUEST = "queue:request"
+    QUEUE_APPROVE = "queue:approve"  # Start, edit or reject queue items that are awaiting approval
     QUEUE_UPDATE_OWN = "queue:update_own"
     QUEUE_UPDATE_ALL = "queue:update_all"
     QUEUE_DELETE_OWN = "queue:delete_own"
@@ -228,6 +233,8 @@ PERMISSION_CATEGORIES = {
         Permission.QUEUE_READ_OWN,
         Permission.QUEUE_READ_ALL,
         Permission.QUEUE_CREATE,
+        Permission.QUEUE_REQUEST,
+        Permission.QUEUE_APPROVE,
         Permission.QUEUE_UPDATE_OWN,
         Permission.QUEUE_UPDATE_ALL,
         Permission.QUEUE_DELETE_OWN,

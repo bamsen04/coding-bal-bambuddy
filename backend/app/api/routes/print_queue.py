@@ -14,7 +14,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from backend.app.api.routes.library_variants import normalize_model_name, resolve_variant_model
-from backend.app.core.auth import RequirePermissionIfAuthEnabled, require_ownership_permission
+from backend.app.core.auth import (
+    RequireAnyPermissionIfAuthEnabled,
+    RequirePermissionIfAuthEnabled,
+    is_auth_enabled,
+    require_ownership_permission,
+)
 from backend.app.core.config import settings
 from backend.app.core.database import get_db
 from backend.app.core.permissions import Permission
@@ -202,6 +207,42 @@ def _assert_can_queue_library_file(library_file: LibraryFile, current_user: User
         and library_file.created_by_id != current_user.id
     ):
         raise HTTPException(404, "Library file not found")
+
+
+def is_request_only(current_user: User | None) -> bool:
+    """True when *current_user* may only request prints, not queue them.
+
+    QUEUE_REQUEST without QUEUE_CREATE. None (auth off, or an API key, which
+    can only have got here through QUEUE_CREATE) is never request-only.
+    """
+    return (
+        current_user is not None
+        and not current_user.has_permission(Permission.QUEUE_CREATE.value)
+        and current_user.has_permission(Permission.QUEUE_REQUEST.value)
+    )
+
+
+def can_approve(current_user: User | None, auth_enabled: bool) -> bool:
+    """Whether the caller may act on an item that is awaiting approval.
+
+    With auth on, a None caller is an API key: approval is a signed-in
+    person's decision, so keys are refused (see _APIKEY_DENIED_PERMISSIONS).
+    """
+    if current_user is None:
+        return not auth_enabled
+    return current_user.has_permission(Permission.QUEUE_APPROVE.value)
+
+
+async def _assert_can_handle_approval_item(db: AsyncSession, item: PrintQueueItem, current_user: User | None) -> None:
+    """Refuse anything but an approver touching an item that awaits approval.
+
+    The requester included: once sent, a request is the approver's to start,
+    change or reject. Items without the flag pass straight through.
+    """
+    if not item.requires_approval:
+        return
+    if not can_approve(current_user, await is_auth_enabled(db)):
+        raise HTTPException(403, "This print is awaiting approval")
 
 
 async def _is_orders_last_source(db: AsyncSession, item: PrintQueueItem) -> bool:
@@ -462,6 +503,7 @@ def _enrich_response(item: PrintQueueItem) -> PrintQueueItemResponse:
         "require_previous_success": item.require_previous_success,
         "auto_off_after": item.auto_off_after,
         "manual_start": item.manual_start,
+        "requires_approval": bool(item.requires_approval),
         "filament_short": bool(item.filament_short),
         "skip_filament_check": bool(item.skip_filament_check),
         "ams_mapping": ams_mapping_parsed,
@@ -809,9 +851,22 @@ def _variant_values(
 async def add_to_queue(
     data: PrintQueueItemCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User | None = RequirePermissionIfAuthEnabled(Permission.QUEUE_CREATE),
+    current_user: User | None = RequireAnyPermissionIfAuthEnabled(Permission.QUEUE_CREATE, Permission.QUEUE_REQUEST),
 ):
-    """Add an item to the print queue."""
+    """Add an item to the print queue.
+
+    A request-only caller (QUEUE_REQUEST without QUEUE_CREATE) gets a print
+    request instead: a library file, aimed at a printer or model, always staged
+    and held until a QUEUE_APPROVE holder starts it.
+    """
+    request_only = is_request_only(current_user)
+    if request_only:
+        if data.archive_id or not (data.library_file_id or data.variants):
+            raise HTTPException(403, "Print requests can only be made from library files")
+        if data.printer_id is None and not data.target_model and not data.variants:
+            raise HTTPException(400, "Choose a printer or printer model for the print request")
+        if data.batch_id is not None:
+            raise HTTPException(403, "Print requests cannot be added to an existing batch")
     # Normalize target_model (e.g., "Bambu Lab X1E" / "C13" -> "X1E").
     # normalize_model_name resolves internal codes first: the previous
     # `normalize_printer_model(x) or normalize_printer_model_id(x)` chain never
@@ -1013,7 +1068,8 @@ async def add_to_queue(
     await lock_queue_positions(db)
 
     insert_position = max(1, data.insert_position or 1)
-    if data.insert_at_top or data.insert_position is not None:
+    # Nor does a request jump the queue.
+    if not request_only and (data.insert_at_top or data.insert_position is not None):
         max_pos = await max_queue_position(db)
         insert_position = min(insert_position, max_pos + 1)
         await db.execute(
@@ -1150,10 +1206,12 @@ async def add_to_queue(
             library_file_id=data.library_file_id,
             cost_center_id=data.cost_center_id,
             estimated_cost=trusted_estimated_cost,
-            scheduled_time=data.scheduled_time,
+            # A request does not wait on a clock; when it runs is the approver's call.
+            scheduled_time=None if request_only else data.scheduled_time,
             require_previous_success=data.require_previous_success,
             auto_off_after=data.auto_off_after,
-            manual_start=data.manual_start,
+            manual_start=data.manual_start or request_only,
+            requires_approval=request_only,
             skip_filament_check=data.skip_filament_check,
             ams_mapping=ams_mapping_json,
             nozzle_rack_choice=nozzle_rack_choice_json,
@@ -1222,20 +1280,18 @@ async def add_to_queue(
         pass  # Don't fail queue add if MQTT fails
 
     # Send notification for job added
+    job_name = (
+        item.archive.filename
+        if item.archive
+        else item.library_file.filename
+        if item.library_file
+        else f"Job #{item.id}"
+    )
+    job_name = job_name.replace(".gcode.3mf", "").replace(".3mf", "")
+    if quantity > 1:
+        job_name = f"{job_name} ×{quantity}"
+    target = item.printer.name if item.printer else (f"Any {item.target_model}" if target_model_norm else "Unassigned")
     try:
-        job_name = (
-            item.archive.filename
-            if item.archive
-            else item.library_file.filename
-            if item.library_file
-            else f"Job #{item.id}"
-        )
-        job_name = job_name.replace(".gcode.3mf", "").replace(".3mf", "")
-        if quantity > 1:
-            job_name = f"{job_name} ×{quantity}"
-        target = (
-            item.printer.name if item.printer else (f"Any {item.target_model}" if target_model_norm else "Unassigned")
-        )
         await notification_service.on_queue_job_added(
             job_name=job_name,
             target=target,
@@ -1245,6 +1301,19 @@ async def add_to_queue(
         )
     except Exception:
         pass  # Don't fail queue add if notification fails
+
+    if request_only:
+        try:
+            await notification_service.on_queue_approval_requested(
+                job_name=job_name,
+                target=target,
+                requested_by=current_user.username,
+                db=db,
+                printer_id=item.printer_id,
+                printer_name=item.printer.name if item.printer else None,
+            )
+        except Exception:
+            logger.warning("Failed to send approval request notification for queue item %s", item.id, exc_info=True)
 
     return _enrich_response(item)
 
@@ -1288,6 +1357,7 @@ async def bulk_update_queue_items(
     updated_count = 0
     skipped_count = 0
     validates_billing_fields = "cost_center_id" in update_data or "estimated_cost" in update_data
+    may_approve = can_approve(user, await is_auth_enabled(db))
 
     for item in items:
         # Skip non-pending rows and rows a dispatch worker has claimed (#2615) —
@@ -1297,12 +1367,19 @@ async def bulk_update_queue_items(
             skipped_count += 1
             continue
 
-        # Ownership check
-        if not can_modify_all and item.created_by_id != user.id:
+        # Ownership check; a request awaiting approval is the approver's alone
+        if item.requires_approval:
+            if not may_approve:
+                skipped_count += 1
+                continue
+        elif not can_modify_all and item.created_by_id != user.id:
             skipped_count += 1
             continue
 
         item_update_data = update_data.copy()
+        if item.requires_approval:
+            # Stays staged until it is approved through /start.
+            item_update_data.pop("manual_start", None)
         if validates_billing_fields:
             trusted_estimated_cost = await _trusted_item_estimated_cost(
                 db,
@@ -1916,8 +1993,11 @@ async def update_queue_item(
     if not item:
         raise HTTPException(404, "Queue item not found")
 
-    # Ownership check
-    if not can_modify_all:
+    # Ownership check. A request awaiting approval is the approver's to
+    # handle whoever made it, and nobody else's -- its requester included.
+    if item.requires_approval:
+        await _assert_can_handle_approval_item(db, item, user)
+    elif not can_modify_all:
         if item.created_by_id != user.id:
             raise HTTPException(403, "You can only update your own queue items")
 
@@ -1933,6 +2013,9 @@ async def update_queue_item(
         raise HTTPException(409, "Item is being dispatched — cancel it first to make changes")
 
     update_data = data.model_dump(exclude_unset=True)
+    if item.requires_approval:
+        # Stays staged until it is approved through /start.
+        update_data.pop("manual_start", None)
 
     # Normalize target_model if being updated (see add_to_queue for why the
     # code map has to run first).
@@ -2089,8 +2172,11 @@ async def delete_queue_item(
     if not item:
         raise HTTPException(404, "Queue item not found")
 
-    # Ownership check
-    if not can_modify_all:
+    # Ownership check. A request awaiting approval is the approver's to
+    # handle whoever made it, and nobody else's -- its requester included.
+    if item.requires_approval:
+        await _assert_can_handle_approval_item(db, item, user)
+    elif not can_modify_all:
         if item.created_by_id != user.id:
             raise HTTPException(403, "You can only delete your own queue items")
 
@@ -2227,8 +2313,11 @@ async def cancel_queue_item(
     if not item:
         raise HTTPException(404, "Queue item not found")
 
-    # Ownership check
-    if not can_modify_all:
+    # Ownership check. A request awaiting approval is the approver's to
+    # handle whoever made it, and nobody else's -- its requester included.
+    if item.requires_approval:
+        await _assert_can_handle_approval_item(db, item, user)
+    elif not can_modify_all:
         if item.created_by_id != user.id:
             raise HTTPException(403, "You can only cancel your own queue items")
 
@@ -2406,7 +2495,10 @@ async def start_queue_item(
     # for #1670's VP-import flow: an unowned item is claimable by the first
     # _OWN holder who clicks ▶, and the route below credits them as owner.
     # An item with a DIFFERENT owner → 403.
-    if not can_modify_all and user is not None:
+    # Starting a request is approving it: queue:approve, whoever made it.
+    if item.requires_approval:
+        await _assert_can_handle_approval_item(db, item, user)
+    elif not can_modify_all and user is not None:
         if item.created_by_id is not None and item.created_by_id != user.id:
             raise HTTPException(403, "You can only start your own queue items")
 
@@ -2444,7 +2536,9 @@ async def start_queue_item(
             )
 
     # Print Anyway / no deficit: clear the flags and let the scheduler dispatch.
+    approved = item.requires_approval
     item.manual_start = False
+    item.requires_approval = False
     item.filament_short = False
     # Persist the user's "Print Anyway" decision so the scheduler does not
     # immediately re-flag this item on the next tick (#1698-followup). The
@@ -2468,4 +2562,10 @@ async def start_queue_item(
         item_id,
         skip_filament_check,
     )
+    if approved:
+        logger.info(
+            "Queue item %s approved by %s",
+            item_id,
+            user.username if user is not None else "unauthenticated caller",
+        )
     return _enrich_response(item)

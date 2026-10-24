@@ -5204,6 +5204,14 @@ async def run_migrations(conn):
     # Nullable: existing rows have none and keep being shown as before.
     await _safe_execute(conn, "ALTER TABLE slot_preset_mappings ADD COLUMN tray_info_idx VARCHAR(32)")
 
+    # Migration: queue items requested via queue:request wait here until a
+    # queue:approve holder starts them. Late in the sequence so none of the
+    # print_queue table rebuilds above can drop it again.
+    await _safe_execute(conn, "ALTER TABLE print_queue ADD COLUMN requires_approval BOOLEAN DEFAULT FALSE")
+    await _safe_execute(
+        conn, "ALTER TABLE notification_providers ADD COLUMN on_queue_approval_requested BOOLEAN DEFAULT TRUE"
+    )
+
 
 async def _migrate_confirm_prompt_body_template(conn) -> None:
     """Replace the one-tap verdict URLs in the outcome prompt's body (#1898).
