@@ -171,6 +171,11 @@ class Permission(StrEnum):
     MAKERWORLD_VIEW = "makerworld:view"  # Resolve MakerWorld URLs and view model metadata
     MAKERWORLD_IMPORT = "makerworld:import"  # Download 3MFs from MakerWorld into the library
 
+    # Filament Colors tab — a standalone colour catalog (name + hex + filament
+    # type + brand). One permission gates the whole tab: viewing it, and
+    # creating/deleting entries within it.
+    FILAMENT_COLORS_VIEW = "filament_colors:view"
+
     # API Keys (admin-level)
     API_KEYS_READ = "api_keys:read"
     API_KEYS_CREATE = "api_keys:create"
@@ -350,6 +355,9 @@ PERMISSION_CATEGORIES = {
         Permission.MAKERWORLD_VIEW,
         Permission.MAKERWORLD_IMPORT,
     ],
+    "Filament Colors": [
+        Permission.FILAMENT_COLORS_VIEW,
+    ],
     "API Keys": [
         Permission.API_KEYS_READ,
         Permission.API_KEYS_CREATE,
@@ -421,6 +429,8 @@ DEFAULT_GROUPS = {
             # MakerWorld integration
             Permission.MAKERWORLD_VIEW.value,
             Permission.MAKERWORLD_IMPORT.value,
+            # Filament Colors tab
+            Permission.FILAMENT_COLORS_VIEW.value,
             # Orca Cloud — needed for the Slice modal's Orca Cloud preset
             # picker to populate. Workshops that use Orca Cloud presets
             # need every operator to be able to authenticate. Bambu Cloud
@@ -529,6 +539,8 @@ DEFAULT_GROUPS = {
             Permission.WEBSOCKET_CONNECT.value,
             # MakerWorld browsing only (no import — that writes to library)
             Permission.MAKERWORLD_VIEW.value,
+            # Filament Colors tab
+            Permission.FILAMENT_COLORS_VIEW.value,
         ],
         "is_system": True,
     },

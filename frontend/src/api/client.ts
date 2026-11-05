@@ -1740,6 +1740,15 @@ export interface ColorCatalogEntry {
   effect_type?: string | null;
 }
 
+export interface FilamentColorEntry {
+  id: number;
+  color_name: string;
+  hex_color: string;
+  filament_type: string;
+  brand: string;
+  created_at: string;
+}
+
 export interface ColorLookupResult {
   found: boolean;
   hex_color: string | null;
@@ -4287,6 +4296,7 @@ export type Permission =
   | 'github:backup' | 'github:restore'
   | 'cloud:auth' | 'orca_cloud:auth'
   | 'makerworld:view' | 'makerworld:import'
+  | 'filament_colors:view'
   | 'api_keys:read' | 'api_keys:create' | 'api_keys:update' | 'api_keys:delete'
   | 'users:read' | 'users:read_slim' | 'users:create' | 'users:update' | 'users:delete'
   | 'groups:read' | 'groups:create' | 'groups:update' | 'groups:delete'
@@ -6523,6 +6533,13 @@ export const api = {
   listFilaments: () => request<Filament[]>('/filament-catalog/'),
   getFilament: (id: number) => request<Filament>(`/filament-catalog/${id}`),
   getFilamentsByType: (type: string) => request<Filament[]>(`/filament-catalog/by-type/${type}`),
+
+  // Filament Colors (standalone color + type + brand catalog)
+  listFilamentColors: () => request<FilamentColorEntry[]>('/filament-colors/'),
+  createFilamentColor: (data: { color_name: string; hex_color: string; filament_type: string; brand: string }) =>
+    request<FilamentColorEntry>('/filament-colors/', { method: 'POST', body: JSON.stringify(data) }),
+  deleteFilamentColor: (id: number) =>
+    request<{ status: string }>(`/filament-colors/${id}`, { method: 'DELETE' }),
 
   // Notification Providers
   getNotificationProviders: () => request<NotificationProvider[]>('/notifications/'),

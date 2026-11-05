@@ -299,6 +299,7 @@ async def init_db():
         connected_app,
         external_link,
         filament,
+        filament_color,
         filament_sku_settings,
         finance,
         github_backup,
@@ -5212,6 +5213,10 @@ async def run_migrations(conn):
         conn, "ALTER TABLE notification_providers ADD COLUMN on_queue_approval_requested BOOLEAN DEFAULT TRUE"
     )
 
+    # Migration: the Filament Colors tab's own catalog table. create_all()
+    # covers fresh installs; this covers upgrades.
+    await _migrate_create_filament_colors_table(conn)
+
 
 async def _migrate_confirm_prompt_body_template(conn) -> None:
     """Replace the one-tap verdict URLs in the outcome prompt's body (#1898).
@@ -5345,6 +5350,37 @@ async def _migrate_create_supplier_tables(conn) -> None:
         conn,
         "CREATE INDEX IF NOT EXISTS ix_spoolman_spool_suppliers_supplier_id ON spoolman_spool_suppliers (supplier_id)",
     )
+
+
+async def _migrate_create_filament_colors_table(conn) -> None:
+    """Create the filament_colors table on databases that predate the Filament Colors tab.
+
+    ``Base.metadata.create_all()`` covers fresh installs; upgrades get the
+    table here, following the ``_migrate_create_supplier_tables`` shape.
+    """
+    if is_sqlite():
+        statement = """
+            CREATE TABLE IF NOT EXISTS filament_colors (
+                id INTEGER PRIMARY KEY,
+                color_name VARCHAR(200) NOT NULL,
+                hex_color VARCHAR(9) NOT NULL,
+                filament_type VARCHAR(50) NOT NULL,
+                brand VARCHAR(100) NOT NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+    else:
+        statement = """
+            CREATE TABLE IF NOT EXISTS filament_colors (
+                id SERIAL PRIMARY KEY,
+                color_name VARCHAR(200) NOT NULL,
+                hex_color VARCHAR(9) NOT NULL,
+                filament_type VARCHAR(50) NOT NULL,
+                brand VARCHAR(100) NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+    await _safe_execute(conn, statement)
 
 
 async def _migrate_supplier_name_key(conn) -> None:
